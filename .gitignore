@@ -1,4 +1,5 @@
-facturador_impuestos/env.py
-facturador_impuestos/__pycache__/
-poetry.lock
-
+.stfolder/
+build/
+dist/
+src/__pycache__/
+mail.spec
