@@ -3,48 +3,60 @@ from imap_tools.query import A
 import datetime
 import re
 import messenger
-import env
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 now = datetime.datetime.now()
 print(now)
 fecha = datetime.date(now.year, now.month - 1, 1)
 
+host = os.environ["HOST"]
+password = os.environ["PASSWORD"]
+username = os.environ["USERNAME"]
+mail_edesur = os.environ["MAIL_EDESUR"]
+mail_aysa = os.environ["MAIL_AYSA"]
+mail_metrogas = os.environ["MAIL_METROGAS"]
+asunto_edesur = os.environ["ASUNTO_EDESUR"]
+asunto_aysa = os.environ["ASUNTO_AYSA"]
+asunto_metrogas = os.environ["ASUNTO_METROGAS"]
+
 
 def buscador():
     print("Iniciando")
-    with MailBox(env.host).login(env.username, env.password) as mailbox:
+    with MailBox(host).login(username, password) as mailbox:
         print("Edesur")
         for msg in mailbox.fetch(
-            A(from_=env.mail_edesur, subject=env.asunto_edesur, date_gte=fecha)
+            A(from_=mail_edesur, subject=asunto_edesur, date_gte=fecha)
         ):
             filter(
                 "Edesur",
                 msg.html,
                 msg.date,
-                "[0-9]{2}/[0-9]{2}/[0-9]{4}",
-                "\$<strong>([0-9]{1,}\.[0-9]{2})",
+                r"[0-9]{2}/[0-9]{2}/[0-9]{4}",
+                r"\$<strong>([0-9]{1,}\.[0-9]{2})",
             )
         print("Metrogas")
         for msg in mailbox.fetch(
-            A(from_=env.mail_metrogas, subject=env.asunto_metrogas, date_gte=fecha)
+            A(from_=mail_metrogas, subject=asunto_metrogas, date_gte=fecha)
         ):
             filter(
                 "Metrogas",
                 msg.html,
                 msg.date,
-                ": ([0-9]{2}\.[0-9]{2}\.[0-9]{4})",
-                "\$.([0-9]{1,}\.[0-9]{1,}\,[0-9]{2})",
+                r": ([0-9]{2}\.[0-9]{2}\.[0-9]{4})",
+                r"\$.([0-9]{1,}\.[0-9]{1,}\,[0-9]{2})",
             )
         print("Aysa")
         for msg in mailbox.fetch(
-            A(from_=env.mail_aysa, subject=env.asunto_aysa, date_gte=fecha)
+            A(from_=mail_aysa, subject=asunto_aysa, date_gte=fecha)
         ):
             filter(
                 "Aysa",
                 msg.html,
                 msg.date,
-                "[0-9]{2}/[0-9]{2}/[0-9]{4}",
-                "\$.([0-9]{1,}\.[0-9]{1,}\,[0-9]{2})",
+                r"[0-9]{2}/[0-9]{2}/[0-9]{4}",
+                r"\$.([0-9]{1,}\.[0-9]{1,}\,[0-9]{2})",
             )
 
 
